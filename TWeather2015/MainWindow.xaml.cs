@@ -13,6 +13,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace TWeather2015
 {
@@ -22,10 +23,11 @@ namespace TWeather2015
     public partial class MainWindow : Window
     {
         IntPtr handle = IntPtr.Zero;
+
         public MainWindow()
         {
             InitializeComponent();
-            
+            SetBottom();
         }
 
         protected override void OnSourceInitialized(EventArgs e)
@@ -40,15 +42,23 @@ namespace TWeather2015
             
             switch(msg)
             {
-                case WM_WINDOWPOSCHANGING:
-                    //SetBottom();
+                case WM_ACTIVATE:
+                    SetBottom();
+                    break;
+                case WM_MOVE:
+                    SetBottom();
                     break;
             }
             return IntPtr.Zero;
         }
 
 
-
+        public void SetBottom()
+        {
+            if (handle == IntPtr.Zero) handle = new WindowInteropHelper(this).Handle;
+            SetWindowPos(handle, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
+            Console.WriteLine("SetButtom");
+        }
 
         [DllImport("user32.dll")]
         static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
@@ -56,14 +66,28 @@ namespace TWeather2015
         const UInt32 SWP_NOSIZE = 0x0001;
         const UInt32 SWP_NOMOVE = 0x0002;
         const UInt32 SWP_NOACTIVATE = 0x0010;
+        const UInt32 SWP_NOZORDER = 0x0004;
         const int WM_WINDOWPOSCHANGING = 0x0046;
+        const int WM_ACTIVATE = 0x0006;
+        const int WM_MOVE = 0x0003;
 
         static readonly IntPtr HWND_BOTTOM = new IntPtr(1);
-
-        public void SetBottom()
+        [StructLayout(LayoutKind.Sequential)]
+        public struct WINDOWPOS
         {
-            if(handle == IntPtr.Zero) handle = new WindowInteropHelper(this).Handle;
-            SetWindowPos(handle, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
+            public IntPtr hwnd;
+            public IntPtr hwndInsertAfter;
+            public int x;
+            public int y;
+            public int cx;
+            public int cy;
+            public uint flags;
+        }
+
+        private void Window_StateChanged(object sender, EventArgs e)
+        {
+            if (WindowState != WindowState.Normal)
+                WindowState = WindowState.Normal;
         }
     }
 }

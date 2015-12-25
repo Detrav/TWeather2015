@@ -5,7 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TWeather2015"
         mc:Ignorable="d"
-        Title="MainWindow" Height="300" Width="300">
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        Title="MainWindow" Height="300" Width="300"
+        StateChanged="Window_StateChanged">
     <Grid>
         
     </Grid>
