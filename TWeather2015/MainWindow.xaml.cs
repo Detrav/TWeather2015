@@ -23,11 +23,11 @@ namespace TWeather2015
     public partial class MainWindow : Window
     {
         IntPtr handle = IntPtr.Zero;
-
+        TestWindow tw = new TestWindow();
         public MainWindow()
         {
             InitializeComponent();
-
+            tw.Show();
         }
 
         protected override void OnSourceInitialized(EventArgs e)
@@ -37,27 +37,14 @@ namespace TWeather2015
              source.AddHook(WndProc);*/
         }
 
-        private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
-        {
-
-            switch (msg)
-            {
-                case WM_ACTIVATE:
-                    SetBottom();
-                    break;
-                case WM_MOVE:
-                    SetBottom();
-                    break;
-            }
-            return IntPtr.Zero;
-        }
+        
 
 
-        public void SetBottom()
+        public void SetBottom(IntPtr after)
         {
             if (handle == IntPtr.Zero) handle = new WindowInteropHelper(this).Handle;
-            SetWindowPos(handle, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
-            Console.WriteLine("SetButtom");
+            SetWindowPos(handle, after, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
+            Console.WriteLine("SetButtom after {0}", after);
         }
 
         [DllImport("user32.dll")]
@@ -95,10 +82,32 @@ namespace TWeather2015
             if (handle == IntPtr.Zero) handle = new WindowInteropHelper(this).Handle;
             IntPtr hwndf = handle;
             IntPtr hwndParent = FindWindow("ProgMan", null);
-            SetParent(hwndf, hwndParent);
-            this.Topmost = false;
+            IntPtr next = FindWindowEx(hwndParent, IntPtr.Zero, "SHELLDLL_DefView", null);
+            SetParent(tw.handle(), next);
+            SetParent(hwndf, next);
+            next = FindWindowEx(next, IntPtr.Zero, "SysListView32", "FolderView");
+            {
+                var i = GetWindowLong(next, -16);
+                if ((i & 0x04000000L) > 0) i -= 0x04000000;
+                Console.WriteLine(i);
+                SetWindowLong(next, -16, i);
+            }
+            SetParent(next, hwndf);
+            //ShowWindow(next, 1);
+            //SetBottom(next);
+            this.Topmost = true;
         }
 
+        [DllImport("User32")]
+        private static extern int ShowWindow(IntPtr hwnd, int nCmdShow);
+
+        [DllImport("user32.dll")]
+        static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
+        [DllImport("user32.dll")]
+        static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern IntPtr FindWindowEx(IntPtr hwndParent, IntPtr hwndChildAfter, string lpszClass, string lpszWindow);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern IntPtr FindWindow(
