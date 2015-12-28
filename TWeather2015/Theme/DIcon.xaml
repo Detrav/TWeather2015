@@ -6,16 +6,28 @@
              xmlns:local="clr-namespace:TWeather2015.Theme"
              mc:Ignorable="d" 
              d:DesignHeight="85" d:DesignWidth="75">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
-        <Image Grid.Row="0" Height="50" Width="50" Source="/TWeather2015;component/Resources/empty.png"/>
-        <TextBlock  Grid.Row="1" Text="Test" HorizontalAlignment="Center" VerticalAlignment="Top" x:Name="textBlock" Foreground="Black" MaxWidth="75" FontFamily="Comic Sans MS" >
+    <Border>
+        <Border.Style>
+            <Style>
+                <Setter Property="Border.Background" Value="Transparent"/>
+                <Style.Triggers>
+                    <Trigger Property="Border.IsMouseOver" Value="True">
+                        <Setter Property="Border.Background" Value="#4C00FAFA" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+        </Border.Style>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Image Grid.Row="0" Height="50" Width="50" Source="/TWeather2015;component/Resources/empty.png"/>
+            <TextBlock  Grid.Row="1" Text="Test" HorizontalAlignment="Center" VerticalAlignment="Top" x:Name="textBlock" Foreground="White" MaxWidth="75" FontFamily="Comic Sans MS" TextWrapping="Wrap" TextAlignment="Center" TextTrimming="CharacterEllipsis" >
             <TextBlock.Effect>
-                <DropShadowEffect/>
+                <DropShadowEffect BlurRadius="5" ShadowDepth="0" Color="Black"/>
             </TextBlock.Effect>
         </TextBlock>
     </Grid>
+    </Border>
 </UserControl>
