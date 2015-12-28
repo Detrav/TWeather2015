@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
 using System.IO;
-
+using System.Windows.Controls;
 
 namespace TWeather2015
 {
@@ -85,6 +85,7 @@ namespace TWeather2015
             }
             this.Topmost = true;
             WindowState = WindowState.Maximized;
+            reCreateGrid();
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -117,6 +118,29 @@ namespace TWeather2015
         {
             Console.WriteLine(e.ChangeType);
             //throw new NotImplementedException();
+        }
+
+        private void reCreateGrid()
+        {
+            int wcount = (int)(Width / 76);
+            int hcount = (int)(Height / 100);
+            //Console.WriteLine("{0} {1}", wcount, hcount);
+            GridLength wlength = new GridLength(76);
+            GridLength hlength = new GridLength(100);
+            for (int i = 0; i < wcount; i++)
+            {
+                ColumnDefinition cd = new ColumnDefinition();
+                cd.Width = wlength;
+                gridMain.ColumnDefinitions.Add(cd);
+            }
+            gridMain.ColumnDefinitions.Add(new ColumnDefinition());
+            for (int i = 0; i<hcount; i++)
+            {
+                RowDefinition rd = new RowDefinition();
+                rd.Height = hlength;
+                gridMain.RowDefinitions.Add(rd);
+            }
+            gridMain.RowDefinitions.Add(new RowDefinition());
         }
     }
 }
