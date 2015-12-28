@@ -85,7 +85,23 @@ namespace TWeather2015
             }
             this.Topmost = true;
             WindowState = WindowState.Maximized;
-            reCreateGrid();
+            dIconManager.reCreateGrid(Width,Height);
+            dIconManager.reCalculateItems();
+            {
+                foreach (var fl in Directory.GetDirectories(
+                                       Environment.GetFolderPath(
+                                           Environment.SpecialFolder.DesktopDirectory)))
+                {
+                    dIconManager.addNewIcon(fl);
+                }
+                foreach (var fl in Directory.GetFiles(
+                                       Environment.GetFolderPath(
+                                           Environment.SpecialFolder.DesktopDirectory)))
+                {
+                    dIconManager.addNewIcon(fl);
+                }
+            }
+            //dIconManager.UpdateLayout();
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -120,27 +136,6 @@ namespace TWeather2015
             //throw new NotImplementedException();
         }
 
-        private void reCreateGrid()
-        {
-            int wcount = (int)(Width / 76);
-            int hcount = (int)(Height / 100);
-            //Console.WriteLine("{0} {1}", wcount, hcount);
-            GridLength wlength = new GridLength(76);
-            GridLength hlength = new GridLength(100);
-            for (int i = 0; i < wcount; i++)
-            {
-                ColumnDefinition cd = new ColumnDefinition();
-                cd.Width = wlength;
-                gridMain.ColumnDefinitions.Add(cd);
-            }
-            gridMain.ColumnDefinitions.Add(new ColumnDefinition());
-            for (int i = 0; i<hcount; i++)
-            {
-                RowDefinition rd = new RowDefinition();
-                rd.Height = hlength;
-                gridMain.RowDefinitions.Add(rd);
-            }
-            gridMain.RowDefinitions.Add(new RowDefinition());
-        }
+        
     }
 }

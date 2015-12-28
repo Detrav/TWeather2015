@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TWeather2015"
+        xmlns:local2="clr-namespace:TWeather2015.Theme"
         mc:Ignorable="d"
         WindowStyle="None"
         ResizeMode="NoResize"
@@ -12,7 +13,6 @@
         Loaded="Window_Loaded"
         Closing="Window_Closing"
         AllowDrop="True" Drop="Window_Drop">
-    <Grid x:Name="gridMain" ShowGridLines="True">
-        <Button Click="Button_Click" HorizontalAlignment="Center" VerticalAlignment="Top">Testik</Button>
-    </Grid>
+    <local2:DIconManager x:Name="dIconManager">
+    </local2:DIconManager>
 </Window>
