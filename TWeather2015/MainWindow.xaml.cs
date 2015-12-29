@@ -5,6 +5,7 @@ using System.Windows.Interop;
 using System.IO;
 using System.Windows.Controls;
 using System.Windows.Input;
+using TWeather2015.Theme;
 
 namespace TWeather2015
 {
@@ -105,10 +106,7 @@ namespace TWeather2015
             //dIconManager.UpdateLayout();
         }
 
-        internal void DIcon_PreviewMouseDown(object sender, MouseButtonEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
+        
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
@@ -153,72 +151,123 @@ namespace TWeather2015
                 //Cursor = System.Windows.Input.Cursors.AppStarting;
             }*/
         }
+        enum MouseState
+        {
+            None, Rectangle, Drag, Dragging
+        }
 
-        bool mouseDowned = false;
+        MouseState mouseState = MouseState.None;
         Point mouseDownPos;
 
         private void gridMain_MouseUp(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left)
             {
-                mouseDowned = false;
+                switch (mouseState)
+                {
+                    case MouseState.Rectangle:
+                        selectionBox.Visibility = Visibility.Collapsed;
+                        Point mouseUpPos = e.GetPosition(gridMain);
 
-                selectionBox.Visibility = Visibility.Collapsed;
-                Point mouseUpPos = e.GetPosition(gridMain);
+                        double left = Math.Min(mouseDownPos.X, mouseUpPos.X);
+                        double right = Math.Max(mouseDownPos.X, mouseUpPos.X);
+                        double top = Math.Min(mouseDownPos.Y, mouseUpPos.Y);
+                        double bottom = Math.Max(mouseDownPos.Y, mouseUpPos.Y);
 
-                double left = Math.Min(mouseDownPos.X, mouseUpPos.X);
-                double right = Math.Max(mouseDownPos.X, mouseUpPos.X);
-                double top = Math.Min(mouseDownPos.Y, mouseUpPos.Y);
-                double bottom = Math.Max(mouseDownPos.Y, mouseUpPos.Y);
+                        dIconManager.selectAll(true, left, top, right, bottom);
 
-                dIconManager.selectAll(true, left, top, right, bottom);
+                        break;
+                    case MouseState.Drag:
+                        if (dIconTemp != null) dIconManager.select(dIconTemp);
+                        break;
+                    case MouseState.Dragging:
+                        break;
+                }
             }
             gridMain.ReleaseMouseCapture();
+            mouseState = MouseState.None;
+            Console.WriteLine(mouseState);
         }
 
         private void gridMain_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            Console.WriteLine(e.ChangedButton);
-            if (e.ChangedButton == MouseButton.Left)
+            switch(mouseState)
             {
-
-                mouseDownPos = e.GetPosition(gridMain);
-                gridMain.CaptureMouse();
-                Canvas.SetLeft(selectionBox, mouseDownPos.X);
-                Canvas.SetTop(selectionBox, mouseDownPos.Y);
-                selectionBox.Width = 0;
-                selectionBox.Height = 0;
-                selectionBox.Visibility = Visibility.Visible;
-                mouseDowned = true;
+                case MouseState.None:
+                    if (e.ChangedButton == MouseButton.Left)
+                    {
+                        mouseDownPos = e.GetPosition(gridMain);
+                        gridMain.CaptureMouse();
+                        Canvas.SetLeft(selectionBox, mouseDownPos.X);
+                        Canvas.SetTop(selectionBox, mouseDownPos.Y);
+                        selectionBox.Width = 0;
+                        selectionBox.Height = 0;
+                        selectionBox.Visibility = Visibility.Visible;
+                        mouseState = MouseState.Rectangle;
+                        Console.WriteLine(mouseState);
+                    }
+                    break;
             }
         }
 
         private void gridMain_MouseMove(object sender, MouseEventArgs e)
         {
-            if (mouseDowned)
+            switch (mouseState)
             {
-                Point mousePos = e.GetPosition(gridMain);
-                if (mouseDownPos.X < mousePos.X)
-                {
-                    Canvas.SetLeft(selectionBox, mouseDownPos.X);
-                    selectionBox.Width = mousePos.X - mouseDownPos.X;
-                }
-                else
-                {
-                    Canvas.SetLeft(selectionBox, mousePos.X);
-                    selectionBox.Width = mouseDownPos.X - mousePos.X;
-                }
+                case MouseState.Rectangle:
+                    Point mousePos = e.GetPosition(gridMain);
+                    if (mouseDownPos.X < mousePos.X)
+                    {
+                        Canvas.SetLeft(selectionBox, mouseDownPos.X);
+                        selectionBox.Width = mousePos.X - mouseDownPos.X;
+                    }
+                    else
+                    {
+                        Canvas.SetLeft(selectionBox, mousePos.X);
+                        selectionBox.Width = mouseDownPos.X - mousePos.X;
+                    }
 
-                if (mouseDownPos.Y < mousePos.Y)
-                {
-                    Canvas.SetTop(selectionBox, mouseDownPos.Y);
-                    selectionBox.Height = mousePos.Y - mouseDownPos.Y;
-                }
-                else
-                {
-                    Canvas.SetTop(selectionBox, mousePos.Y);
-                    selectionBox.Height = mouseDownPos.Y - mousePos.Y;
-                }
+                    if (mouseDownPos.Y < mousePos.Y)
+                    {
+                        Canvas.SetTop(selectionBox, mouseDownPos.Y);
+                        selectionBox.Height = mousePos.Y - mouseDownPos.Y;
+                    }
+                    else
+                    {
+                        Canvas.SetTop(selectionBox, mousePos.Y);
+                        selectionBox.Height = mouseDownPos.Y - mousePos.Y;
+                    }
+                    break;
+                case MouseState.Drag:
+                    Point current = e.GetPosition(gridMain);
+                    if (Math.Abs(current.X - mouseDownPos.X) >= SystemParameters.MinimumHorizontalDragDistance ||
+                        Math.Abs(current.Y - mouseDownPos.Y) >= SystemParameters.MinimumVerticalDragDistance)
+                    {
+                        if (dIconTemp != null) dIconManager.select(dIconTemp);
+                        mouseState = MouseState.Dragging;
+                        Console.WriteLine(mouseState);
+                    }
+                    break;
+            }
+        }
+
+        DIcon dIconTemp = null;
+
+        internal void DIcon_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            switch(mouseState)
+            {
+                case MouseState.None:
+                    if(e.ChangedButton == MouseButton.Left && sender is DIcon)
+                    {
+                        
+                        mouseDownPos = e.GetPosition(gridMain);
+                        gridMain.CaptureMouse();
+                        dIconTemp = sender as DIcon;
+                        mouseState = MouseState.Drag;
+                        Console.WriteLine(mouseState);
+                    }
+                    break;
             }
         }
     }

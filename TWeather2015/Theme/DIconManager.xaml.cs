@@ -151,6 +151,10 @@ namespace TWeather2015.Theme
             return new DataObject(DataFormats.FileDrop, files.ToArray(),true);
         }
 
-
+        internal void select(DIcon dIconTemp)
+        {
+            selectAll(false);
+            dIconTemp.IsSelected = true;
+        }
     }
 }

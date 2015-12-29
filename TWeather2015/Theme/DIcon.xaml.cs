@@ -92,7 +92,7 @@ namespace TWeather2015.Theme
 
         private void borderMain_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-            myParent.DIcon_PreviewMouseDown(sender, e);
+            myParent.DIcon_PreviewMouseDown(this, e);
             //Console.WriteLine(e.GetPosition(null).Y);
         }
     }
