@@ -23,7 +23,17 @@ namespace TWeather2015.Theme
         public DIconManager()
         {
             InitializeComponent();
+            foreach (var i in Application.Current.Windows)
+            {
+                if (i is MainWindow)
+                {
+                    myParent = i as MainWindow;
+                    break;
+                }
+            }
         }
+
+        public MainWindow myParent { get; private set; }
 
         public int wcount { get; private set; }
         public int hcount { get; private set; }
@@ -59,12 +69,6 @@ namespace TWeather2015.Theme
             items = new DIcon[wcount, hcount];
             return wcount*hcount;
         }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            (Parent as MainWindow).Close();
-        }
-
 
         public DIcon addNewIcon(string filename)
         {
@@ -112,6 +116,11 @@ namespace TWeather2015.Theme
             return count;
         }
 
+        internal void DIcon_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            myParent.DIcon_PreviewMouseDown(sender, e);
+        }
+
         internal void selectAll(bool v)
         {
             foreach (DIcon it in gridMain.Children)
@@ -142,72 +151,6 @@ namespace TWeather2015.Theme
             return new DataObject(DataFormats.FileDrop, files.ToArray(),true);
         }
 
-        bool mouseDowned = false;
-        Point mouseDownPos; 
 
-        private void gridMain_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            if (e.ChangedButton == MouseButton.Left)
-            {
-                mouseDowned = false;
-                
-                selectionBox.Visibility = Visibility.Collapsed;
-                Point mouseUpPos = e.GetPosition(gridMain);
-
-                double left = Math.Min(mouseDownPos.X, mouseUpPos.X);
-                double right = Math.Max(mouseDownPos.X, mouseUpPos.X);
-                double top = Math.Min(mouseDownPos.Y, mouseUpPos.Y);
-                double bottom = Math.Max(mouseDownPos.Y, mouseUpPos.Y);
-
-                selectAll(true, left, top, right, bottom);
-            }
-            gridMain.ReleaseMouseCapture();
-        }
-
-        private void gridMain_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            Console.WriteLine(e.ChangedButton);
-            if (e.ChangedButton == MouseButton.Left)
-            {
-
-                mouseDownPos = e.GetPosition(gridMain);
-                gridMain.CaptureMouse();
-                Canvas.SetLeft(selectionBox, mouseDownPos.X);
-                Canvas.SetTop(selectionBox, mouseDownPos.Y);
-                selectionBox.Width = 0;
-                selectionBox.Height = 0;
-                selectionBox.Visibility = Visibility.Visible;
-                mouseDowned = true;
-            }
-        }
-
-        private void gridMain_MouseMove(object sender, MouseEventArgs e)
-        {
-            if(mouseDowned)
-            {
-                Point mousePos = e.GetPosition(gridMain);
-                if (mouseDownPos.X < mousePos.X)
-                {
-                    Canvas.SetLeft(selectionBox, mouseDownPos.X);
-                    selectionBox.Width = mousePos.X - mouseDownPos.X;
-                }
-                else
-                {
-                    Canvas.SetLeft(selectionBox, mousePos.X);
-                    selectionBox.Width = mouseDownPos.X - mousePos.X;
-                }
-
-                if (mouseDownPos.Y < mousePos.Y)
-                {
-                    Canvas.SetTop(selectionBox, mouseDownPos.Y);
-                    selectionBox.Height = mousePos.Y - mouseDownPos.Y;
-                }
-                else
-                {
-                    Canvas.SetTop(selectionBox, mousePos.Y);
-                    selectionBox.Height = mouseDownPos.Y - mousePos.Y;
-                }
-            }
-        }
     }
 }

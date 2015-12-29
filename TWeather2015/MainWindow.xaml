@@ -13,6 +13,16 @@
         Loaded="Window_Loaded"
         Closing="Window_Closing"
         AllowDrop="True" Drop="Window_Drop" DragOver="Window_DragOver">
-    <local2:DIconManager x:Name="dIconManager">
-    </local2:DIconManager>
+    <Grid Background="Transparent" x:Name="gridMain" MouseDown="gridMain_MouseDown" MouseUp="gridMain_MouseUp" MouseMove="gridMain_MouseMove" IsHitTestVisible="True">
+        <local2:DIconManager x:Name="dIconManager">
+        </local2:DIconManager>
+        <Canvas>
+            <Rectangle
+                x:Name="selectionBox"
+                Visibility="Collapsed"
+                Stroke="{DynamicResource {x:Static SystemColors.HotTrackBrushKey}}"
+                StrokeThickness="2" Fill="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" Opacity="0.2"
+                />
+        </Canvas>
+    </Grid>
 </Window>

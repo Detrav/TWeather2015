@@ -6,17 +6,8 @@
              xmlns:local="clr-namespace:TWeather2015.Theme"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <Grid>
-        <Grid Background="Transparent" x:Name="gridMain" ShowGridLines="False" MouseDown="gridMain_MouseDown" MouseUp="gridMain_MouseUp" MouseMove="gridMain_MouseMove" IsHitTestVisible="True">
-        
-    </Grid>
-        <Canvas>
-            <Rectangle
-                x:Name="selectionBox"
-                Visibility="Collapsed"
-                Stroke="{DynamicResource {x:Static SystemColors.HotTrackBrushKey}}"
-                StrokeThickness="2" Fill="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" Opacity="0.2"
-                />
-        </Canvas>
+
+    <Grid x:Name="gridMain">
+
     </Grid>
 </UserControl>

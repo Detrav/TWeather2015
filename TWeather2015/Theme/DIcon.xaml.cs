@@ -89,45 +89,11 @@ namespace TWeather2015.Theme
             if (p.Y + borderMain.ActualHeight < top) return false;
             return true;
         }
-        bool mouseDowned = false;
-        bool isDragging = false;
-        private void borderMain_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            if (e.ChangedButton == MouseButton.Left)
-            {
-                mouseDowned = true;
-                Console.WriteLine("dragStarted");
-            }
-        }
 
-        private void borderMain_MouseMove(object sender, MouseEventArgs e)
+        private void borderMain_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (isDragging)
-            {
-                e.Handled = true;
-            }
-            if (mouseDowned)
-                if (e.LeftButton == MouseButtonState.Pressed)
-                {
-                    if (IsSelected == false) borderMain_Click(select, e);
-                    DataObject data = myParent.getDataForDragAndDrop();
-                    if (data != null)
-                    {
-                        DragDrop.DoDragDrop(this, data, DragDropEffects.Link | DragDropEffects.Copy | DragDropEffects.Move);
-                        e.Handled = true;
-                        isDragging = true;
-                        this.CaptureMouse();
-                    }
-                    mouseDowned = false;
-                }
-            
-        }
-
-        private void borderMain_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            isDragging = false;
-            mouseDowned = false;
-            this.ReleaseMouseCapture();
+            myParent.DIcon_PreviewMouseDown(sender, e);
+            //Console.WriteLine(e.GetPosition(null).Y);
         }
     }
 }
