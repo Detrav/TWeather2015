@@ -76,8 +76,8 @@ namespace TWeather2015.Theme
 
         private void borderMain_Click(object sender, RoutedEventArgs e)
         {
-            myParent.selectAll(false);
-            IsSelected = true;
+           // myParent.selectAll(false);
+           // IsSelected = true;
         }
 
        internal bool inRect(double left, double top, double right, double bottom)

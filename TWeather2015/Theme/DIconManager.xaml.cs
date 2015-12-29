@@ -156,5 +156,27 @@ namespace TWeather2015.Theme
             selectAll(false);
             dIconTemp.IsSelected = true;
         }
+
+        internal void selectAdd(DIcon dIconTemp)
+        {
+            dIconTemp.IsSelected = true;
+        }
+
+        internal void selectAllAdd(bool v, double left, double top, double right, double bottom)
+        {
+            foreach (DIcon it in gridMain.Children)
+            {
+                if (it.inRect(left, top, right, bottom)) it.IsSelected = v;
+            }
+        }
+
+        internal void prepareForDragAndDrop(DIcon dIconTemp)
+        {
+            if(!dIconTemp.IsSelected)
+            {
+                select(dIconTemp);
+            }
+            //D&D
+        }
     }
 }

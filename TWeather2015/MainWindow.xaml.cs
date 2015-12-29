@@ -173,12 +173,16 @@ namespace TWeather2015
                         double right = Math.Max(mouseDownPos.X, mouseUpPos.X);
                         double top = Math.Min(mouseDownPos.Y, mouseUpPos.Y);
                         double bottom = Math.Max(mouseDownPos.Y, mouseUpPos.Y);
-
-                        dIconManager.selectAll(true, left, top, right, bottom);
+                        if (Keyboard.Modifiers.HasFlag(ModifierKeys.Control) || Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
+                            dIconManager.selectAllAdd(true, left, top, right, bottom);
+                        else dIconManager.selectAll(true, left, top, right, bottom);
 
                         break;
                     case MouseState.Drag:
-                        if (dIconTemp != null) dIconManager.select(dIconTemp);
+                        if (Keyboard.Modifiers.HasFlag(ModifierKeys.Control) || Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
+                        { if (dIconTemp != null) dIconManager.selectAdd(dIconTemp); }
+                        else if (dIconTemp != null) dIconManager.select(dIconTemp);
+
                         break;
                     case MouseState.Dragging:
                         break;
@@ -243,7 +247,7 @@ namespace TWeather2015
                     if (Math.Abs(current.X - mouseDownPos.X) >= SystemParameters.MinimumHorizontalDragDistance ||
                         Math.Abs(current.Y - mouseDownPos.Y) >= SystemParameters.MinimumVerticalDragDistance)
                     {
-                        if (dIconTemp != null) dIconManager.select(dIconTemp);
+                        if (dIconTemp != null) dIconManager.prepareForDragAndDrop(dIconTemp);
                         mouseState = MouseState.Dragging;
                         Console.WriteLine(mouseState);
                     }
