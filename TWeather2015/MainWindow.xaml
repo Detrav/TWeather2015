@@ -12,7 +12,7 @@
         StateChanged="Window_StateChanged"
         Loaded="Window_Loaded"
         Closing="Window_Closing"
-        AllowDrop="True" Drop="Window_Drop">
+        AllowDrop="True" Drop="Window_Drop" DragOver="Window_DragOver">
     <local2:DIconManager x:Name="dIconManager">
     </local2:DIconManager>
 </Window>

@@ -6,28 +6,18 @@
              xmlns:local="clr-namespace:TWeather2015.Theme"
              mc:Ignorable="d" 
              d:DesignHeight="85" d:DesignWidth="75">
-    <Border>
-        <Border.Style>
-            <Style>
-                <Setter Property="Border.Background" Value="Transparent"/>
-                <Style.Triggers>
-                    <Trigger Property="Border.IsMouseOver" Value="True">
-                        <Setter Property="Border.Background" Value="#4C00FAFA" />
-                    </Trigger>
-                </Style.Triggers>
-            </Style>
-        </Border.Style>
+    <Button x:Name="borderMain" Width="75" HorizontalAlignment="Center" VerticalAlignment="Top" Background="Transparent" BorderBrush="Transparent" Click="borderMain_Click">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
             <Image Grid.Row="0" Height="50" Width="50" Source="/TWeather2015;component/Resources/empty.png"/>
-            <TextBlock  Grid.Row="1" Text="Test" HorizontalAlignment="Center" VerticalAlignment="Top" x:Name="textBlock" Foreground="White" MaxWidth="75" FontFamily="Comic Sans MS" TextWrapping="Wrap" TextAlignment="Center" TextTrimming="CharacterEllipsis" >
+            <TextBlock  Grid.Row="1" Text="TestTestTestTestTestTest" HorizontalAlignment="Center" VerticalAlignment="Top" x:Name="textBlock" Foreground="White" MaxWidth="75" FontFamily="Comic Sans MS" TextWrapping="Wrap" TextAlignment="Center"  TextTrimming="CharacterEllipsis" Panel.ZIndex="1000">
             <TextBlock.Effect>
                 <DropShadowEffect BlurRadius="5" ShadowDepth="0" Color="Black"/>
             </TextBlock.Effect>
         </TextBlock>
     </Grid>
-    </Border>
+    </Button>
 </UserControl>

@@ -56,6 +56,7 @@ namespace TWeather2015.Theme
             }
             gridMain.RowDefinitions.Add(new RowDefinition());
 
+            items = new DIcon[wcount, hcount];
             return wcount*hcount;
         }
 
@@ -72,7 +73,7 @@ namespace TWeather2015.Theme
                 {
                     if(items[i,j] == null)
                     {
-                        items[i, j] = new DIcon(filename,i,j);
+                        items[i, j] = new DIcon(this,filename,i,j);
                         gridMain.Children.Add(items[i, j]);
                         return items[i,j];
                     }
@@ -110,6 +111,103 @@ namespace TWeather2015.Theme
             }
             return count;
         }
-        
+
+        internal void selectAll(bool v)
+        {
+            foreach (DIcon it in gridMain.Children)
+            {
+                it.IsSelected = v;
+            }
+            //throw new NotImplementedException();
+        }
+
+        internal void selectAll(bool v, double left, double top,double right,double bottom)
+        {
+            foreach (DIcon it in gridMain.Children)
+            {
+                it.IsSelected = !v;
+                if (it.inRect(left, top, right,bottom)) it.IsSelected = v;
+            }
+        }
+
+        internal DataObject getDataForDragAndDrop()
+        {
+            List<string> files = new List<string>();
+            foreach (DIcon it in gridMain.Children)
+            {
+                if(it.IsSelected)
+                files.Add(it.filename);
+            }
+            if (files.Count == 0) return null;
+            return new DataObject(DataFormats.FileDrop, files.ToArray(),true);
+        }
+
+        bool mouseDowned = false;
+        Point mouseDownPos; 
+
+        private void gridMain_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left)
+            {
+                mouseDowned = false;
+                
+                selectionBox.Visibility = Visibility.Collapsed;
+                Point mouseUpPos = e.GetPosition(gridMain);
+
+                double left = Math.Min(mouseDownPos.X, mouseUpPos.X);
+                double right = Math.Max(mouseDownPos.X, mouseUpPos.X);
+                double top = Math.Min(mouseDownPos.Y, mouseUpPos.Y);
+                double bottom = Math.Max(mouseDownPos.Y, mouseUpPos.Y);
+
+                selectAll(true, left, top, right, bottom);
+            }
+            gridMain.ReleaseMouseCapture();
+        }
+
+        private void gridMain_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            Console.WriteLine(e.ChangedButton);
+            if (e.ChangedButton == MouseButton.Left)
+            {
+
+                mouseDownPos = e.GetPosition(gridMain);
+                gridMain.CaptureMouse();
+                Canvas.SetLeft(selectionBox, mouseDownPos.X);
+                Canvas.SetTop(selectionBox, mouseDownPos.Y);
+                selectionBox.Width = 0;
+                selectionBox.Height = 0;
+                selectionBox.Visibility = Visibility.Visible;
+                mouseDowned = true;
+            }
+        }
+
+        private void gridMain_MouseMove(object sender, MouseEventArgs e)
+        {
+            if(mouseDowned)
+            {
+                Point mousePos = e.GetPosition(gridMain);
+                if (mouseDownPos.X < mousePos.X)
+                {
+                    Canvas.SetLeft(selectionBox, mouseDownPos.X);
+                    selectionBox.Width = mousePos.X - mouseDownPos.X;
+                }
+                else
+                {
+                    Canvas.SetLeft(selectionBox, mousePos.X);
+                    selectionBox.Width = mouseDownPos.X - mousePos.X;
+                }
+
+                if (mouseDownPos.Y < mousePos.Y)
+                {
+                    Canvas.SetTop(selectionBox, mouseDownPos.Y);
+                    selectionBox.Height = mousePos.Y - mouseDownPos.Y;
+                }
+                else
+                {
+                    Canvas.SetTop(selectionBox, mousePos.Y);
+                    selectionBox.Height = mouseDownPos.Y - mousePos.Y;
+                }
+            }
+        }
     }
 }

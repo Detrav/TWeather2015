@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Interop;
 using System.IO;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace TWeather2015
 {
@@ -126,7 +127,7 @@ namespace TWeather2015
             {
                 string[] FileList = (string[])e.Data.GetData(DataFormats.FileDrop, false);
                 foreach (string File in FileList)
-                    Console.WriteLine(File);
+                    Console.WriteLine("{0} {1}",e.AllowedEffects,File);
             }
         }
 
@@ -136,6 +137,16 @@ namespace TWeather2015
             //throw new NotImplementedException();
         }
 
-        
+        private void Window_DragOver(object sender, DragEventArgs e)
+        {
+            e.Handled = true;
+            /*if( e.KeyStates.HasFlag(DragDropKeyStates.AltKey) && e.AllowedEffects.HasFlag(DragDropEffects.Link))
+            {
+                Console.WriteLine("test");
+                e.Effects = DragDropEffects.Link;
+                e.Handled = true;
+                //Cursor = System.Windows.Input.Cursors.AppStarting;
+            }*/
+        }
     }
 }
