@@ -249,6 +249,7 @@ namespace TWeather2015
                     {
                         if (dIconTemp != null) dIconManager.prepareForDragAndDrop(dIconTemp);
                         mouseState = MouseState.Dragging;
+                        doDragAndDrop();
                         Console.WriteLine(mouseState);
                     }
                     break;
@@ -264,7 +265,6 @@ namespace TWeather2015
                 case MouseState.None:
                     if(e.ChangedButton == MouseButton.Left && sender is DIcon)
                     {
-                        
                         mouseDownPos = e.GetPosition(gridMain);
                         gridMain.CaptureMouse();
                         dIconTemp = sender as DIcon;
@@ -273,6 +273,16 @@ namespace TWeather2015
                     }
                     break;
             }
+        }
+
+        internal void doDragAndDrop()
+        {
+            DataObject data = dIconManager.getDataForDragAndDrop();
+            if (data == null) return;
+            DragDrop.DoDragDrop(this, data, DragDropEffects.Copy | DragDropEffects.Move);
+            gridMain.ReleaseMouseCapture();
+            mouseState = MouseState.None;
+            Console.WriteLine(mouseState);
         }
     }
 }
