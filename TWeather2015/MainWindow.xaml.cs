@@ -37,6 +37,8 @@ namespace TWeather2015
         FileSystemWatcher fswDesktop = new FileSystemWatcher(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory));
         FileSystemWatcher fswCommonDesktop = new FileSystemWatcher(Environment.GetFolderPath(Environment.SpecialFolder.CommonDesktopDirectory));
 
+        private string secretKey = "W[='Mjp09!h3UCp";
+
         public MainWindow()
         {
             InitializeComponent();
@@ -80,14 +82,14 @@ namespace TWeather2015
             IntPtr next = FindWindowEx(hwndParent, IntPtr.Zero, "SHELLDLL_DefView", null);
             SetParent(handle, next);
             desktopHandle = FindWindowEx(next, IntPtr.Zero, "SysListView32", "FolderView");
-            if(desktopHandle!=IntPtr.Zero)
+            if (desktopHandle != IntPtr.Zero)
             {
                 ShowWindow(desktopHandle, 0);
                 //Убираем сущ
             }
             this.Topmost = true;
             WindowState = WindowState.Maximized;
-            dIconManager.reCreateGrid(Width,Height);
+            dIconManager.reCreateGrid(Width, Height);
             dIconManager.reCalculateItems();
             {
                 foreach (var fl in Directory.GetDirectories(
@@ -106,7 +108,7 @@ namespace TWeather2015
             //dIconManager.UpdateLayout();
         }
 
-        
+
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
@@ -124,13 +126,39 @@ namespace TWeather2015
 
         private void Window_Drop(object sender, DragEventArgs e)
         {
-            //Console.WriteLine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory));
-            //Console.WriteLine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDesktopDirectory));
-            if (e.Data.GetDataPresent(DataFormats.FileDrop) == true)
+            if (!e.Data.GetDataPresent(DataFormats.FileDrop))
             {
-                string[] FileList = (string[])e.Data.GetData(DataFormats.FileDrop, false);
-                foreach (string File in FileList)
-                    Console.WriteLine("{0} {1}",e.AllowedEffects,File);
+                e.Effects = DragDropEffects.None;
+                e.Handled = true;
+            }
+            string[] FileList = (string[])e.Data.GetData(DataFormats.FileDrop, false);
+            if (FileList.Length == 0) { e.Handled = true; return; }
+            
+            bool selfDroped = e.Data.GetDataPresent(DataFormats.UnicodeText) ? e.Data.GetData(DataFormats.Text).ToString() == secretKey : false;
+            Point mouseDropPos = e.GetPosition(gridMain);
+            if (e.KeyStates.HasFlag(DragDropKeyStates.AltKey) && e.AllowedEffects.HasFlag(DragDropEffects.Link))
+            {
+                e.Effects = DragDropEffects.Link;
+                e.Handled = true;
+                linkToDesktop(FileList, mouseDropPos, selfDroped);
+            }
+            else if (e.KeyStates.HasFlag(DragDropKeyStates.ControlKey) && e.AllowedEffects.HasFlag(DragDropEffects.Copy))
+            {
+                e.Effects = DragDropEffects.Copy;
+                e.Handled = true;
+                copyToDesktop(FileList, mouseDropPos, selfDroped);
+            }
+            else if (e.AllowedEffects.HasFlag(DragDropEffects.Move))
+            {
+                e.Effects = DragDropEffects.Move;
+                e.Handled = true;
+                moveToDesktop(FileList, mouseDropPos, selfDroped);
+            }
+            else if (e.AllowedEffects.HasFlag(DragDropEffects.Link))
+            {
+                e.Effects = DragDropEffects.Link;
+                e.Handled = true;
+                linkToDesktop(FileList, mouseDropPos, selfDroped);
             }
         }
 
@@ -142,15 +170,31 @@ namespace TWeather2015
 
         private void Window_DragOver(object sender, DragEventArgs e)
         {
-            e.Handled = true;
-            /*if( e.KeyStates.HasFlag(DragDropKeyStates.AltKey) && e.AllowedEffects.HasFlag(DragDropEffects.Link))
+            if (!e.Data.GetDataPresent(DataFormats.FileDrop))
             {
-                Console.WriteLine("test");
+                e.Effects = DragDropEffects.None;
+                e.Handled = true;
+            }
+            if (e.KeyStates.HasFlag(DragDropKeyStates.AltKey) && e.AllowedEffects.HasFlag(DragDropEffects.Link))
+            {
                 e.Effects = DragDropEffects.Link;
                 e.Handled = true;
                 //Cursor = System.Windows.Input.Cursors.AppStarting;
-            }*/
+            }
+            else if (e.KeyStates.HasFlag(DragDropKeyStates.ControlKey) && e.AllowedEffects.HasFlag(DragDropEffects.Copy))
+            {
+                e.Effects = DragDropEffects.Copy;
+                e.Handled = true;
+                //Cursor = System.Windows.Input.Cursors.AppStarting;
+            }
+            else if (e.KeyStates.HasFlag(DragDropKeyStates.ShiftKey) && e.AllowedEffects.HasFlag(DragDropEffects.Move))
+            {
+                e.Effects = DragDropEffects.Move;
+                e.Handled = true;
+                //Cursor = System.Windows.Input.Cursors.AppStarting;
+            }
         }
+
         enum MouseState
         {
             None, Rectangle, Drag, Dragging
@@ -195,7 +239,7 @@ namespace TWeather2015
 
         private void gridMain_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            switch(mouseState)
+            switch (mouseState)
             {
                 case MouseState.None:
                     if (e.ChangedButton == MouseButton.Left)
@@ -260,10 +304,10 @@ namespace TWeather2015
 
         internal void DIcon_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-            switch(mouseState)
+            switch (mouseState)
             {
                 case MouseState.None:
-                    if(e.ChangedButton == MouseButton.Left && sender is DIcon)
+                    if (e.ChangedButton == MouseButton.Left && sender is DIcon)
                     {
                         mouseDownPos = e.GetPosition(gridMain);
                         gridMain.CaptureMouse();
@@ -279,10 +323,29 @@ namespace TWeather2015
         {
             DataObject data = dIconManager.getDataForDragAndDrop();
             if (data == null) return;
+            data.SetText(secretKey);
             DragDrop.DoDragDrop(this, data, DragDropEffects.Copy | DragDropEffects.Move);
             gridMain.ReleaseMouseCapture();
             mouseState = MouseState.None;
             Console.WriteLine(mouseState);
+        }
+
+        private void moveToDesktop(string[] fileList, Point pos, bool selfDroped)
+        {
+            //Console.WriteLine("selfDroped : {0}", selfDroped);
+            //Проверяем если это местные файлы десктоп
+            //Проверяем существуют ли файлы
+            //Если Всё ок то переносим
+        }
+
+        private void copyToDesktop(string[] fileList, Point pos, bool selfDroped)
+        {
+            if (selfDroped) return;
+        }
+
+        private void linkToDesktop(string[] fileList, Point pos, bool selfDroped)
+        {
+            if (selfDroped) return;
         }
     }
 }
