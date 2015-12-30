@@ -223,5 +223,22 @@ namespace TWeather2015.Theme
             }
             return new DIconPosition(x,y);
         }
+
+        internal void moveTo(string[] fileList, int x, int y)
+        {
+            foreach(var f in fileList)
+            {
+                foreach(DIcon it in gridMain.Children)
+                {
+                    if(it.filename == f)
+                    {
+                        items[it.x, it.y] = null;
+                        it.x = x;
+                        it.y = y;
+                        placeIcon(it);
+                    }
+                }
+            }
+        }
     }
 }

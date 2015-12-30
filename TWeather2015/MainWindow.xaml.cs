@@ -327,6 +327,12 @@ namespace TWeather2015
 
         private void moveToDesktop(string[] fileList, Point pos, bool selfDroped)
         {
+            if(selfDroped)
+            {
+                int x = (int)(pos.X / 76);
+                int y = (int)(pos.Y / 100);
+                dIconManager.moveTo(fileList, x, y);
+            }
             //Console.WriteLine("selfDroped : {0}", selfDroped);
             //Проверяем если это местные файлы десктоп
             //Проверяем существуют ли файлы
