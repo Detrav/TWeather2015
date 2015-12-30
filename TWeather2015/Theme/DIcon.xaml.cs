@@ -108,6 +108,7 @@ namespace TWeather2015.Theme
 
         internal void updateIcon()
         {
+            imageMain.Source = null;
             Console.WriteLine("updated");
             FileToImageIconConverter ftiic = new FileToImageIconConverter(filename);
             imageMain.Source = ftiic.Image;
