@@ -90,7 +90,7 @@ namespace TWeather2015
 
             IntPtr hwndParent = FindWindow("ProgMan", null);
             hwndParent2 = FindWindowEx(hwndParent, IntPtr.Zero, "SHELLDLL_DefView", null);
-            //SetParent(handle, hwndParent2);
+            SetParent(handle, hwndParent2);
             desktopHandle = FindWindowEx(hwndParent2, IntPtr.Zero, "SysListView32", "FolderView");
             if (desktopHandle != IntPtr.Zero)
             {
