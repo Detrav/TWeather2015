@@ -69,6 +69,7 @@
     <Compile Include="Core\FileToImageIconConverter.cs" />
     <Compile Include="Core\NativeMethods.cs" />
     <Compile Include="Core\SerializableDictionary.cs" />
+    <Compile Include="Core\ShellContextMenu.cs" />
     <Compile Include="Core\ShellLink.cs" />
     <Compile Include="Theme\DIcon.xaml.cs">
       <DependentUpon>DIcon.xaml</DependentUpon>

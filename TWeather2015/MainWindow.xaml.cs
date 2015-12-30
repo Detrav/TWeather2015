@@ -9,6 +9,7 @@ using TWeather2015.Theme;
 using System.Collections.Generic;
 using System.Threading;
 using NuGetUpdate.Shared;
+using Peter;
 
 namespace TWeather2015
 {
@@ -247,6 +248,13 @@ namespace TWeather2015
                     case MouseState.Dragging:
                         break;
                 }
+            }
+            if(e.ChangedButton == MouseButton.Right)
+            {
+                ShellContextMenu scm = new ShellContextMenu();
+                DirectoryInfo[] di = new DirectoryInfo[] {new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)) };
+                var p = new System.Drawing.Point() { X = (int)e.GetPosition(gridMain).X, Y = (int)e.GetPosition(gridMain).Y };
+                scm.ShowContextMenu(di,p);
             }
             gridMain.ReleaseMouseCapture();
             mouseState = MouseState.None;
