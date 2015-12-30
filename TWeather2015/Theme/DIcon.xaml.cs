@@ -63,6 +63,8 @@ namespace TWeather2015.Theme
             text = System.IO.Path.GetFileNameWithoutExtension(filename);
             this.filename = filename;
             this.myParent = myParent;
+            FileToImageIconConverter ftiic = new FileToImageIconConverter(filename);
+            imageMain.Source = ftiic.Image;
             setPosition(x, y);
             Console.WriteLine("{0} {1} {2}", text, x, y);
         }
