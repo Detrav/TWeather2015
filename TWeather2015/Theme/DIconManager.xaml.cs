@@ -119,6 +119,7 @@ namespace TWeather2015.Theme
             items = new DIcon[wcount, hcount];
             foreach(DIcon it in gridMain.Children)
             {
+                it.updateIcon();
                 placeIcon(it);
             }
             return count;
@@ -324,5 +325,54 @@ namespace TWeather2015.Theme
             }));
         }
 
+        internal void sortByName()
+        {
+            SortedList<string, DIcon> list = new SortedList<string, DIcon>(new DuplicateKeyComparer<string>());
+            foreach (DIcon it in gridMain.Children)
+            {
+                list.Add(System.IO.Path.GetFileName(it.filename), it);
+            }
+            DIcon[] items = list.Values.ToArray();
+            int k = 0;
+            for(int i = 0; i<wcount; i++)
+                for(int j = 0; j< hcount; j++)
+                {
+                    if(k<items.Length)
+                    {
+                        items[k].setPosition(i, j);
+                    }
+                    else
+                    {
+                        DIconPositionManager.savePositions();
+                        reCalculateItems();
+                        return;
+                    }
+                    k++;
+                }
+        }
+
+        /// <summary>
+        /// Comparer for comparing two keys, handling equality as beeing greater
+        /// Use this Comparer e.g. with SortedLists or SortedDictionaries, that don't allow duplicate keys
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        public class DuplicateKeyComparer<TKey>
+                        :
+                     IComparer<TKey> where TKey : IComparable
+        {
+            #region IComparer<TKey> Members
+
+            public int Compare(TKey x, TKey y)
+            {
+                int result = x.CompareTo(y);
+
+                if (result == 0)
+                    return 1;   // Handle equality as beeing greater
+                else
+                    return result;
+            }
+
+            #endregion
+        }
     }
 }

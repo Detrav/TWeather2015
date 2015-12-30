@@ -16,13 +16,13 @@
     <Grid Background="Transparent" x:Name="gridMain" MouseDown="gridMain_MouseDown" MouseUp="gridMain_MouseUp" MouseMove="gridMain_MouseMove" IsHitTestVisible="True">
         <Grid.ContextMenu>
             <ContextMenu>
-                <MenuItem Header="Сортировка по имени"/>
-                <MenuItem Header="Обновить"/>
+                <MenuItem Header="Сортировка по имени" Click="MenuItem_Click_Sort"/>
+                <MenuItem Header="Обновить" Click="MenuItem_Click_Refresh"/>
                 <Separator />
-                <MenuItem Header="Свойства"/>
+                <MenuItem Header="Свойства" Click="MenuItem_Click_Properties"/>
                 <Separator />
-                <MenuItem Header="Стандартное меню"/>
-                <MenuItem Header="Выход"/>
+                <MenuItem Header="Стандартное меню" Click="MenuItem_Click_OldMenu"/>
+                <MenuItem Header="Выход" Click="MenuItem_Click_Exit"/>
             </ContextMenu>
         </Grid.ContextMenu>
         <local2:DIconManager x:Name="dIconManager">

@@ -466,5 +466,33 @@ namespace TWeather2015
             e.Handled = true;
             Console.WriteLine("right Click for {0}", v.Length);
         }
+
+        private void MenuItem_Click_Sort(object sender, RoutedEventArgs e)
+        {
+            dIconManager.sortByName();
+        }
+        private void MenuItem_Click_Refresh(object sender, RoutedEventArgs e)
+        {
+            dIconManager.reCreateGrid(Width, Height);
+            dIconManager.reCalculateItems();
+
+        }
+        private void MenuItem_Click_Properties(object sender, RoutedEventArgs e)
+        {
+
+        }
+        private void MenuItem_Click_OldMenu(object sender, RoutedEventArgs e)
+        {
+            var pt = Mouse.GetPosition(gridMain);
+            //Console.WriteLine("{0:X} - {1:X} - {2:X}", (ushort)pt.X, (ushort)pt.Y << 16 , );
+            IntPtr pt2 = new IntPtr(((ushort)pt.X) + ((ushort)pt.Y << 16));
+            PostMessage(hwndParent2, WM_RBUTTONDOWN, IntPtr.Zero, pt2);
+            PostMessage(hwndParent2, WM_RBUTTONUP, IntPtr.Zero, pt2);
+            return;
+        }
+        private void MenuItem_Click_Exit(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
     }
 }
