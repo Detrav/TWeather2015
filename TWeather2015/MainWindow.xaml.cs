@@ -124,6 +124,7 @@ namespace TWeather2015
                 files.AddRange(Directory.GetFiles(Environment.GetFolderPath(Environment.SpecialFolder.CommonDesktopDirectory)));
                 dIconManager.loadIcons(files.ToArray());
             }
+            dIconManager.reCalculateItems();
             //dIconManager.UpdateLayout();
         }
 

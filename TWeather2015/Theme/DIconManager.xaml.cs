@@ -1,17 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using TWeather2015.Core;
 
 namespace TWeather2015.Theme
@@ -76,6 +69,7 @@ namespace TWeather2015.Theme
             DIconPositionManager.loadPositions();
             foreach (var f in files)
             {
+                if (isFileHidden(f)) continue;
                 var p = DIconPositionManager.getPosition(f);
                 if (p.x == 0 && p.y == 0)
                     addNewIconToEnd(f);
@@ -89,6 +83,7 @@ namespace TWeather2015.Theme
 
         public DIcon addNewIconToEnd(string filename)
         {
+            if (isFileHidden(filename)) return null;
             for (int i = 0; i < wcount; i++)
                 for (int j = 0; j < hcount; j++)
                 {
@@ -283,6 +278,7 @@ namespace TWeather2015.Theme
         {
             this.Dispatcher.Invoke((Action)(() =>
             {
+                if (isFileHidden(fullPath)) return;
                 var p = DIconPositionManager.getPosition(fullPath);
                 if (p.x == 0 && p.y == 0)
                     addNewIconToEnd(fullPath);
@@ -374,6 +370,11 @@ namespace TWeather2015.Theme
             }
 
             #endregion
+        }
+
+        static public bool isFileHidden(string fileName)
+        {
+            return new FileInfo(fileName).Attributes.HasFlag(FileAttributes.Hidden);
         }
     }
 }
