@@ -239,6 +239,7 @@ namespace TWeather2015.Theme
                     }
                 }
             }
+            DIconPositionManager.savePositions();
         }
     }
 }
