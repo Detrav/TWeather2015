@@ -96,6 +96,26 @@ namespace TWeather2015.Core
             //Console.WriteLine("x:{0}-y:{1}", x, y);
             return items[name];
         }
+
+        internal static void deletePosition(string fullPath)
+        {
+            if (instance.items == null) return;
+            if (instance.items.ContainsKey(fullPath))
+                instance.items.Remove(fullPath);
+            instance.needToSave = true;
+        }
+
+        internal static void renamePosition(string oldFullPath, string fullPath)
+        {
+            if (instance.items == null) return;
+            if (instance.items.ContainsKey(oldFullPath))
+            {
+                var p = instance.items[oldFullPath];
+                instance.items.Remove(oldFullPath);
+                instance.items[fullPath] = p;
+                instance.needToSave = true;
+            }
+        }
     }
 
     public class DIconPosition

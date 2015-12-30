@@ -58,10 +58,15 @@ namespace TWeather2015.Theme
             InitializeComponent();
         }
 
-        public DIcon(DIconManager myParent,string filename, int x, int y) : this()
-        {            
+        public void setFileName(string filename)
+        {
             text = System.IO.Path.GetFileNameWithoutExtension(filename);
             this.filename = filename;
+        }
+
+        public DIcon(DIconManager myParent,string filename, int x, int y) : this()
+        {
+            setFileName(filename);
             this.myParent = myParent;
             FileToImageIconConverter ftiic = new FileToImageIconConverter(filename);
             imageMain.Source = ftiic.Image;
@@ -98,6 +103,13 @@ namespace TWeather2015.Theme
         {
             myParent.DIcon_PreviewMouseDown(this, e);
             //Console.WriteLine(e.GetPosition(null).Y);
+        }
+
+        internal void updateIcon()
+        {
+            Console.WriteLine("updated");
+            FileToImageIconConverter ftiic = new FileToImageIconConverter(filename);
+            imageMain.Source = ftiic.Image;
         }
     }
 }

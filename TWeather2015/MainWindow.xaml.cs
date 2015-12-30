@@ -159,6 +159,25 @@ namespace TWeather2015
 
         private void FswDesktop_Changed(object sender, FileSystemEventArgs e)
         {
+            switch(e.ChangeType)
+            {
+                case WatcherChangeTypes.Created:
+                    dIconManager.addNewIcon(e.FullPath);
+                    break;
+                case WatcherChangeTypes.Renamed:
+                    if (e is RenamedEventArgs)
+                    {
+                        RenamedEventArgs e1 = e as RenamedEventArgs;
+                        dIconManager.reName(e1.OldFullPath, e1.FullPath);
+                    }
+                    break;
+                case WatcherChangeTypes.Deleted:
+                    dIconManager.delete(e.FullPath);
+                    break;
+                case WatcherChangeTypes.Changed:
+                    dIconManager.updateIcon(e.FullPath);
+                    break;
+            }
             Console.WriteLine(e.ChangeType);
             //throw new NotImplementedException();
         }

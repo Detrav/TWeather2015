@@ -225,6 +225,63 @@ namespace TWeather2015.Theme
             return new DIconPosition(x,y);
         }
 
+        internal void delete(string fullPath)
+        {
+            this.Dispatcher.Invoke((Action)(() =>
+            {
+                DIconPositionManager.deletePosition(fullPath);
+                int temp = -1;
+
+                for(int i = 0; i< gridMain.Children.Count;i++)
+                {
+                    if ((gridMain.Children[i] as DIcon).filename == fullPath)
+                    {
+                        temp = i;
+                        break;
+                    }
+                }
+                if (temp >= 0)
+                {
+                    DIcon deleted = gridMain.Children[temp] as DIcon;
+                    gridMain.Children.RemoveAt(temp);
+                    items[deleted.x, deleted.y] = null;
+                }
+                DIconPositionManager.savePositions();
+            }));
+        }
+
+        internal void reName(string oldFullPath, string fullPath)
+        {
+            this.Dispatcher.Invoke((Action)(() =>
+            {
+                DIconPositionManager.renamePosition(oldFullPath, fullPath);
+                foreach (DIcon it in gridMain.Children)
+                {
+                    if (it.filename == oldFullPath)
+                    {
+                        it.setFileName(fullPath);
+                        break;
+                    }
+                }
+                DIconPositionManager.savePositions();
+            }));
+        }
+
+        internal void addNewIcon(string fullPath)
+        {
+            this.Dispatcher.Invoke((Action)(() =>
+            {
+                var p = DIconPositionManager.getPosition(fullPath);
+                if (p.x == 0 && p.y == 0)
+                    addNewIconToEnd(fullPath);
+                else
+                {
+                    gridMain.Children.Add(placeIcon(new DIcon(this, fullPath, p.x, p.y)));
+                }
+                DIconPositionManager.savePositions();
+            }));
+        }
+
         internal void moveTo(string[] fileList, int x, int y)
         {
             foreach(var f in fileList)
@@ -241,5 +298,21 @@ namespace TWeather2015.Theme
             }
             DIconPositionManager.savePositions();
         }
+
+        internal void updateIcon(string fullPath)
+        {
+            this.Dispatcher.Invoke((Action)(() =>
+            {
+                foreach (DIcon it in gridMain.Children)
+                {
+                    if (it.filename == fullPath)
+                    {
+                        it.updateIcon();
+                        return;
+                    }
+                }
+            }));
+        }
+
     }
 }
