@@ -117,5 +117,15 @@ namespace TWeather2015.Theme
         {
             System.Diagnostics.Process.Start(filename);
         }
+
+        private void borderMain_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (!IsSelected)
+            {
+                myParent.selectAll(false);
+                IsSelected = true;
+            }
+            myParent.DIcon_PreviewMouseUp(this, e);
+        }
     }
 }

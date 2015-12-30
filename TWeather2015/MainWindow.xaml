@@ -14,6 +14,17 @@
         Closing="Window_Closing"
         AllowDrop="True" Drop="Window_Drop" DragOver="Window_DragOver">
     <Grid Background="Transparent" x:Name="gridMain" MouseDown="gridMain_MouseDown" MouseUp="gridMain_MouseUp" MouseMove="gridMain_MouseMove" IsHitTestVisible="True">
+        <Grid.ContextMenu>
+            <ContextMenu>
+                <MenuItem Header="Сортировка по имени"/>
+                <MenuItem Header="Обновить"/>
+                <Separator />
+                <MenuItem Header="Свойства"/>
+                <Separator />
+                <MenuItem Header="Стандартное меню"/>
+                <MenuItem Header="Выход"/>
+            </ContextMenu>
+        </Grid.ContextMenu>
         <local2:DIconManager x:Name="dIconManager">
         </local2:DIconManager>
         <Canvas>

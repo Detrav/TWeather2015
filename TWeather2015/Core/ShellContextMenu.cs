@@ -232,7 +232,7 @@ namespace Peter
         /// <returns>IShellFolder for the folder (relative from the desktop)</returns>
         private IShellFolder GetParentFolder(string folderName)
         {
-            if (null == _oParentFolder)
+            //if (null == _oParentFolder)
             {
                 IShellFolder oDesktopFolder = GetDesktopFolder();
                 if (null == oDesktopFolder)
@@ -288,16 +288,15 @@ namespace Peter
                 return null;
             }
 
-            IShellFolder oParentFolder = GetParentFolder(arrFI[0].DirectoryName);
-            if (null == oParentFolder)
-            {
-                return null;
-            }
-
             IntPtr[] arrPIDLs = new IntPtr[arrFI.Length];
             int n = 0;
             foreach (FileInfo fi in arrFI)
             {
+                IShellFolder oParentFolder = GetParentFolder(fi.DirectoryName);
+                if (null == oParentFolder)
+                {
+                    return null;
+                }
                 // Get the file relative to folder
                 uint pchEaten = 0;
                 SFGAO pdwAttributes = 0;

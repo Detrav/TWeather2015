@@ -138,6 +138,16 @@ namespace TWeather2015.Theme
             //throw new NotImplementedException();
         }
 
+        internal void DIcon_PreviewMouseUp(DIcon dIcon, MouseButtonEventArgs e)
+        {
+            List<string> strs = new List<string>();
+            foreach(DIcon it in gridMain.Children)
+            {
+                if (it.IsSelected) strs.Add(it.filename);
+            }
+            myParent.DIcon_PreviewMouseUp(strs.ToArray(), e);
+        }
+
         internal void selectAll(bool v, double left, double top,double right,double bottom)
         {
             foreach (DIcon it in gridMain.Children)

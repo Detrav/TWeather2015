@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:TWeather2015.Theme"
              mc:Ignorable="d" 
              d:DesignHeight="85" d:DesignWidth="75">
-    <Button x:Name="borderMain" Width="75" HorizontalAlignment="Center" VerticalAlignment="Top" Background="Transparent" BorderBrush="Transparent" Click="borderMain_Click" PreviewMouseDown="borderMain_PreviewMouseDown">
+    <Button x:Name="borderMain" Width="75" HorizontalAlignment="Center" VerticalAlignment="Top" Background="Transparent" BorderBrush="Transparent" Click="borderMain_Click" PreviewMouseDown="borderMain_PreviewMouseDown" PreviewMouseUp="borderMain_PreviewMouseUp">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>

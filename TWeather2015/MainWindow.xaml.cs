@@ -90,14 +90,14 @@ namespace TWeather2015
 
             IntPtr hwndParent = FindWindow("ProgMan", null);
             hwndParent2 = FindWindowEx(hwndParent, IntPtr.Zero, "SHELLDLL_DefView", null);
-            SetParent(handle, hwndParent2);
+            //SetParent(handle, hwndParent2);
             desktopHandle = FindWindowEx(hwndParent2, IntPtr.Zero, "SysListView32", "FolderView");
             if (desktopHandle != IntPtr.Zero)
             {
                 ShowWindow(desktopHandle, 0);
                 //Убираем сущ
             }
-            this.Topmost = true;
+            this.Topmost = false;
             WindowState = WindowState.Maximized;
             dIconManager.reCreateGrid(Width, Height);
             dIconManager.reCalculateItems();
@@ -255,7 +255,7 @@ namespace TWeather2015
                         break;
                 }
             }
-            if(e.ChangedButton == MouseButton.Right)
+            /*if(e.ChangedButton == MouseButton.Right)
             {
                 var pt = e.GetPosition(gridMain);
                 //Console.WriteLine("{0:X} - {1:X} - {2:X}", (ushort)pt.X, (ushort)pt.Y << 16 , );
@@ -264,12 +264,7 @@ namespace TWeather2015
                 PostMessage(hwndParent2, WM_RBUTTONUP, IntPtr.Zero, pt2);
                 return;
                 Close();
-                
-                ShellContextMenu scm = new ShellContextMenu();
-                FileInfo[] di = new FileInfo[] {new FileInfo(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)) };
-                var p = new System.Drawing.Point() { X = (int)e.GetPosition(gridMain).X, Y = (int)e.GetPosition(gridMain).Y };
-                scm.ShowContextMenu(di,p);
-            }
+            }*/
             gridMain.ReleaseMouseCapture();
             mouseState = MouseState.None;
             Console.WriteLine(mouseState);
@@ -456,6 +451,20 @@ namespace TWeather2015
         private static bool isFolder(string path)
         {
             return path.EndsWith("\\") || Directory.Exists(path);
+        }
+
+        internal void DIcon_PreviewMouseUp(string[] v, MouseButtonEventArgs e)
+        {
+            ShellContextMenu scm = new ShellContextMenu();
+            List<FileInfo> fis = new List<FileInfo>();
+            foreach (string str in v)
+            {
+                fis.Add(new FileInfo(str));
+            }
+            var p = new System.Drawing.Point() { X = (int)e.GetPosition(gridMain).X, Y = (int)e.GetPosition(gridMain).Y };
+            scm.ShowContextMenu(fis.ToArray(), p);
+            e.Handled = true;
+            Console.WriteLine("right Click for {0}", v.Length);
         }
     }
 }
