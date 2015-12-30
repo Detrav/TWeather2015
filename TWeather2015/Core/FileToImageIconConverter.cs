@@ -24,7 +24,7 @@ namespace TWeather2015.Core
         {
             get
             {
-                if (icon == null && System.IO.File.Exists(FilePath))
+                if (icon == null && (System.IO.File.Exists(FilePath) || Directory.Exists(FilePath)))
                 {
                     _imgList.ImageListSize = SysImageListSize.extraLargeIcons;
                     using (Icon sysicon = _imgList.Icon(_imgList.IconIndex(FilePath, isFolder(FilePath))))
