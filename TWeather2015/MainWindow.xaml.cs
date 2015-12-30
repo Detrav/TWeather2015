@@ -317,7 +317,10 @@ namespace TWeather2015
         }
 
         DIcon dIconTemp = null;
-
+        int previousClick = (int)doubleClickTime;
+        [DllImport("user32.dll")]
+        static extern uint GetDoubleClickTime();
+        static uint doubleClickTime = GetDoubleClickTime();
         internal void DIcon_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
             switch (mouseState)
@@ -325,11 +328,21 @@ namespace TWeather2015
                 case MouseState.None:
                     if (e.ChangedButton == MouseButton.Left && sender is DIcon)
                     {
-                        mouseDownPos = e.GetPosition(gridMain);
-                        gridMain.CaptureMouse();
-                        dIconTemp = sender as DIcon;
-                        mouseState = MouseState.Drag;
-                        Console.WriteLine(mouseState);
+                        if (Environment.TickCount - previousClick < doubleClickTime)
+                        {
+                            //Console.WriteLine("TickCoubt {0} - {1} = {2} < {3} ", Environment.TickCount, previousClick, Environment.TickCount - previousClick, doubleClickTime);
+                            previousClick = (int)doubleClickTime;
+                            (sender as DIcon).start();
+                        }
+                        else
+                        {
+                            mouseDownPos = e.GetPosition(gridMain);
+                            gridMain.CaptureMouse();
+                            dIconTemp = sender as DIcon;
+                            mouseState = MouseState.Drag;
+                            Console.WriteLine(mouseState);
+                            previousClick = Environment.TickCount;
+                        }
                     }
                     break;
             }

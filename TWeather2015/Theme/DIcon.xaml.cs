@@ -112,5 +112,10 @@ namespace TWeather2015.Theme
             FileToImageIconConverter ftiic = new FileToImageIconConverter(filename);
             imageMain.Source = ftiic.Image;
         }
+
+        internal void start()
+        {
+            System.Diagnostics.Process.Start(filename);
+        }
     }
 }
