@@ -22,8 +22,8 @@ namespace TWeather2015.Theme
     public partial class DIcon : UserControl
     {
 
-        public int x { get; set; }
-        public int y { get; set; }
+        public int x { get; private set; }
+        public int y { get; private set; }
         public string text { get { return textBlock.Text; } set { textBlock.Text = value; borderMain.ToolTip = value; } }
         public string filename { get; private set; }
 

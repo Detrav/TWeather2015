@@ -106,6 +106,7 @@ namespace TWeather2015.Theme
         {
             if (items[icon.x, icon.y] != null) if (items[icon.x, icon.y].filename == icon.filename) return items[icon.x, icon.y];
             var position = getNearestSpace(icon.x, icon.y);
+            //Console.WriteLine("empty x:{0}-y:{1}", position.x, position.y);
             if (position == null) return null;
             icon.setPosition(position.x, position.y);
             items[icon.x, icon.y] = icon;
@@ -208,7 +209,7 @@ namespace TWeather2015.Theme
 
                     for (int i = left; i < right; i++)
                         for (int j = top; j < bottom; j++)
-                        { if (items[x, y] == null) return new DIconPosition(i, j); }
+                        { if (items[i, j] == null) return new DIconPosition(i, j); }
                     if (left == 0 && top == 0 && right == wcount && bottom == hcount) return null;
                 }
                 /*
@@ -233,8 +234,7 @@ namespace TWeather2015.Theme
                     if(it.filename == f)
                     {
                         items[it.x, it.y] = null;
-                        it.x = x;
-                        it.y = y;
+                        it.setPosition(x, y);
                         placeIcon(it);
                     }
                 }
