@@ -87,9 +87,24 @@ namespace TWeather2015
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             if (handle == IntPtr.Zero) handle = new WindowInteropHelper(this).Handle;
-
-            IntPtr hwndParent = FindWindow("ProgMan", null);
+            Console.WriteLine("FirstHandle");
+            IntPtr hwndParent = FindWindowEx(IntPtr.Zero, IntPtr.Zero, "Progman", null);
             hwndParent2 = FindWindowEx(hwndParent, IntPtr.Zero, "SHELLDLL_DefView", null);
+            if(hwndParent2 == IntPtr.Zero)
+            {
+                Console.WriteLine("NotFound");
+                hwndParent = IntPtr.Zero;
+                do
+                {
+                    if ((hwndParent2 = FindWindowEx(hwndParent, IntPtr.Zero, "SHELLDLL_DefView", null)) != IntPtr.Zero)
+                    {
+                        Console.WriteLine("Found! YEAH!");
+                        break;
+                    }
+                    hwndParent = FindWindowEx(IntPtr.Zero, hwndParent, "WorkerW", null);
+                } while (hwndParent != IntPtr.Zero);
+            }
+            //hwndParent2 = FindWindow("SHELLDLL_DefView", null);
             SetParent(handle, hwndParent2);
             desktopHandle = FindWindowEx(hwndParent2, IntPtr.Zero, "SysListView32", "FolderView");
             if (desktopHandle != IntPtr.Zero)
@@ -389,7 +404,7 @@ namespace TWeather2015
             if(selfDroped)
             {
                 int x = (int)(pos.X / 76);
-                int y = (int)(pos.Y / 100);
+                int y = (int)(pos.Y / 104);
                 dIconManager.moveTo(fileList, x, y);
                 return;
             }

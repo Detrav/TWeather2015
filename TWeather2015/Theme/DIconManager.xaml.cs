@@ -44,10 +44,10 @@ namespace TWeather2015.Theme
         public int reCreateGrid(double w, double h)
         {
             wcount = (int)(w / 76);
-            hcount = (int)(h / 100);
+            hcount = (int)(h / 104);
             //Console.WriteLine("{0} {1}", wcount, hcount);
             GridLength wlength = new GridLength(76);
-            GridLength hlength = new GridLength(100);
+            GridLength hlength = new GridLength(104);
 
             gridMain.ColumnDefinitions.Clear();
             gridMain.RowDefinitions.Clear();
@@ -104,7 +104,8 @@ namespace TWeather2015.Theme
 
         public DIcon placeIcon(DIcon icon)
         {
-            if (items[icon.x, icon.y] != null) if (items[icon.x, icon.y].filename == icon.filename) return items[icon.x, icon.y];
+            if (icon.x < wcount && icon.x >= 0 && icon.y < hcount && icon.y >= 0)
+                if (items[icon.x, icon.y] != null) if (items[icon.x, icon.y].filename == icon.filename) return items[icon.x, icon.y];
             var position = getNearestSpace(icon.x, icon.y);
             //Console.WriteLine("empty x:{0}-y:{1}", position.x, position.y);
             if (position == null) return null;
