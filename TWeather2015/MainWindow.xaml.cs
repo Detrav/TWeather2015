@@ -90,7 +90,7 @@ namespace TWeather2015
 
             IntPtr hwndParent = FindWindow("ProgMan", null);
             hwndParent2 = FindWindowEx(hwndParent, IntPtr.Zero, "SHELLDLL_DefView", null);
-            //SetParent(handle, hwndParent2);
+            SetParent(handle, hwndParent2);
             desktopHandle = FindWindowEx(hwndParent2, IntPtr.Zero, "SysListView32", "FolderView");
             if (desktopHandle != IntPtr.Zero)
             {
@@ -339,7 +339,7 @@ namespace TWeather2015
         static extern uint GetDoubleClickTime();
         static uint doubleClickTime = GetDoubleClickTime();
         private IntPtr hwndParent2;
-
+        DIcon dIconLastClick = null;
         internal void DIcon_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
             switch (mouseState)
@@ -351,7 +351,11 @@ namespace TWeather2015
                         {
                             //Console.WriteLine("TickCoubt {0} - {1} = {2} < {3} ", Environment.TickCount, previousClick, Environment.TickCount - previousClick, doubleClickTime);
                             previousClick = (int)doubleClickTime;
-                            (sender as DIcon).start();
+                            if (dIconLastClick == (sender as DIcon))
+                            {
+                                (sender as DIcon).start();
+                                dIconLastClick = null;
+                            }
                         }
                         else
                         {
@@ -361,7 +365,9 @@ namespace TWeather2015
                             mouseState = MouseState.Drag;
                             Console.WriteLine(mouseState);
                             previousClick = Environment.TickCount;
+                            dIconLastClick = sender as DIcon;
                         }
+                        
                     }
                     break;
             }
@@ -455,16 +461,19 @@ namespace TWeather2015
 
         internal void DIcon_PreviewMouseUp(string[] v, MouseButtonEventArgs e)
         {
-            ShellContextMenu scm = new ShellContextMenu();
-            List<FileInfo> fis = new List<FileInfo>();
-            foreach (string str in v)
+            if (e.ChangedButton == MouseButton.Right)
             {
-                fis.Add(new FileInfo(str));
+                ShellContextMenu scm = new ShellContextMenu();
+                List<FileInfo> fis = new List<FileInfo>();
+                foreach (string str in v)
+                {
+                    fis.Add(new FileInfo(str));
+                }
+                var p = new System.Drawing.Point() { X = (int)e.GetPosition(gridMain).X, Y = (int)e.GetPosition(gridMain).Y };
+                scm.ShowContextMenu(fis.ToArray(), p);
+                e.Handled = true;
+                Console.WriteLine("right Click for {0}", v.Length);
             }
-            var p = new System.Drawing.Point() { X = (int)e.GetPosition(gridMain).X, Y = (int)e.GetPosition(gridMain).Y };
-            scm.ShowContextMenu(fis.ToArray(), p);
-            e.Handled = true;
-            Console.WriteLine("right Click for {0}", v.Length);
         }
 
         private void MenuItem_Click_Sort(object sender, RoutedEventArgs e)
@@ -493,6 +502,16 @@ namespace TWeather2015
         private void MenuItem_Click_Exit(object sender, RoutedEventArgs e)
         {
             Close();
+        }
+
+        private void myMediaElement_MediaEnded(object sender, RoutedEventArgs e)
+        {
+            var me = (sender as MediaElement);
+            me.Play();
+            //me.Position = TimeSpan.FromMilliseconds(100);
+            me.Position = TimeSpan.Zero;
+            Console.WriteLine("ended");
+            e.Handled = true;
         }
     }
 }

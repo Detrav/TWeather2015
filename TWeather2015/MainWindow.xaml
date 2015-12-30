@@ -25,6 +25,8 @@
                 <MenuItem Header="Выход" Click="MenuItem_Click_Exit"/>
             </ContextMenu>
         </Grid.ContextMenu>
+        <MediaElement Name="myMediaElement" LoadedBehavior="Play" UnloadedBehavior="Manual" MediaEnded="myMediaElement_MediaEnded"
+                      Source="Resources/video.avi"/>
         <local2:DIconManager x:Name="dIconManager">
         </local2:DIconManager>
         <Canvas>
