@@ -7,6 +7,8 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using TWeather2015.Theme;
 using System.Collections.Generic;
+using System.Threading;
+using NuGetUpdate.Shared;
 
 namespace TWeather2015
 {
@@ -356,16 +358,67 @@ namespace TWeather2015
             //Проверяем если это местные файлы десктоп
             //Проверяем существуют ли файлы
             //Если Всё ок то переносим
+            //Знаю знаю, плохо, но не хочу сюрпризов
+            try
+            {
+                foreach (var oldfile in fileList)
+                {
+                    string newfile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), Path.GetFileName(oldfile));
+                    if (isFolder(oldfile)) Directory.Move(oldfile, newfile);
+                    else File.Move(oldfile, newfile);
+                    //Console.WriteLine(newfile);
+                    //File.Move();
+                    dIconManager.updateIcon(newfile);
+                }
+            }
+            catch (Exception e) { new Thread(new ThreadStart(delegate { MessageBox.Show(e.Message, "Exception", MessageBoxButton.OK, MessageBoxImage.Error); })).Start(); }
         }
 
         private void copyToDesktop(string[] fileList, Point pos, bool selfDroped)
         {
             if (selfDroped) return;
+            //Знаю знаю, плохо, но не хочу сюрпризов
+            try
+            {
+                foreach (var oldfile in fileList)
+                {
+                    string newfile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), Path.GetFileName(oldfile));
+                    if (isFolder(oldfile)) { }//Directory.(oldfile, newfile);
+                    else File.Copy(oldfile, newfile);
+                    //Console.WriteLine(newfile);
+                    //File.Move();
+                    dIconManager.updateIcon(newfile);
+                }
+            }
+            catch (Exception e) { new Thread(new ThreadStart(delegate { MessageBox.Show(e.Message, "Exception", MessageBoxButton.OK, MessageBoxImage.Error); })).Start(); }
         }
 
         private void linkToDesktop(string[] fileList, Point pos, bool selfDroped)
         {
             if (selfDroped) return;
+            //Знаю знаю, плохо, но не хочу сюрпризов
+            try
+            {
+                foreach (var oldfile in fileList)
+                {
+                    string newfile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), Path.GetFileNameWithoutExtension(oldfile)) + ".lnk";
+                    using (ShellLink shortcut = new ShellLink())
+                    {
+                        shortcut.Target = oldfile;
+                        shortcut.WorkingDirectory = Path.GetDirectoryName(oldfile);
+                        shortcut.Description = Path.GetFileNameWithoutExtension(oldfile);
+                        shortcut.DisplayMode = LinkDisplayMode.Normal;
+                        shortcut.Save(newfile);
+                    }
+                    dIconManager.updateIcon(newfile);
+                }
+            }
+            catch (Exception e) { new Thread(new ThreadStart(delegate { MessageBox.Show(e.Message, "Exception", MessageBoxButton.OK, MessageBoxImage.Error); })).Start(); }
+        }
+
+        private static bool isFolder(string path)
+        {
+            return path.EndsWith("\\") || Directory.Exists(path);
         }
     }
 }
