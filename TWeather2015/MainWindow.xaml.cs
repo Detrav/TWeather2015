@@ -391,6 +391,7 @@ namespace TWeather2015
                 int x = (int)(pos.X / 76);
                 int y = (int)(pos.Y / 100);
                 dIconManager.moveTo(fileList, x, y);
+                return;
             }
             //Console.WriteLine("selfDroped : {0}", selfDroped);
             //Проверяем если это местные файлы десктоп
