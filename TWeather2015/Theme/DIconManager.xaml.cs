@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using TWeather2015.Core;
 
 namespace TWeather2015.Theme
 {
@@ -70,7 +71,23 @@ namespace TWeather2015.Theme
             return wcount*hcount;
         }
 
-        public DIcon addNewIcon(string filename)
+        public void loadIcons(string[] files)
+        {
+            DIconPositionManager.loadPositions();
+            foreach (var f in files)
+            {
+                var p = DIconPositionManager.getPosition(f);
+                if (p.x == 0 && p.y == 0)
+                    addNewIconToEnd(f);
+                else
+                {
+                    gridMain.Children.Add(placeIcon(new DIcon(this, f, p.x, p.y)));
+                }
+            }
+            DIconPositionManager.savePositions();
+        }
+
+        public DIcon addNewIconToEnd(string filename)
         {
             for (int i = 0; i < wcount; i++)
                 for (int j = 0; j < hcount; j++)
@@ -87,20 +104,10 @@ namespace TWeather2015.Theme
 
         public DIcon placeIcon(DIcon icon)
         {
-            if (icon.x >= wcount || icon.y >= hcount || items[icon.x, icon.y] != null)
-            {
-                for (int i = 0; i < wcount; i++)
-                    for (int j = 0; j < hcount; j++)
-                    {
-                        if (items[i, j] == null)
-                        {
-                            icon.setPosition(i, j);
-                            items[icon.x, icon.y] = icon;
-                            return icon;
-                        }
-                    }
-                return null;
-            }
+            if (items[icon.x, icon.y] != null) if (items[icon.x, icon.y].filename == icon.filename) return items[icon.x, icon.y];
+            var position = getNearestSpace(icon.x, icon.y);
+            if (position == null) return null;
+            icon.setPosition(position.x, position.y);
             items[icon.x, icon.y] = icon;
             return icon;
         }
@@ -177,6 +184,44 @@ namespace TWeather2015.Theme
                 select(dIconTemp);
             }
             //D&D
+        }
+
+        private DIconPosition getNearestSpace(int x,int y)
+        {
+            if (x >= wcount || y >= hcount || items[x, y] != null)
+            {
+                //Первый цикл будет сдвигать влево вверх
+                //Второй цикл будет сдвигать враво вниз
+                //Грубо но думаю не будет слишком сложно, сложность будет 1,9,25...(1+2n)^n, даже если это 25 попыток с угла это всего 23 426 итераций, должно проскочить :)
+                int left = x;
+                int top = y;
+                int right = x+1;
+                int bottom = y+1;
+                //Обезопасим shell :) без while(true)
+                for (int count = 0; count < 25; count++)
+                {
+                    left--; top--; right++; bottom++;
+                    if (left < 0) left = 0;
+                    if (top < 0) top = 0;
+                    if (right > wcount) right = wcount;
+                    if (bottom > hcount) bottom = hcount;
+
+                    for (int i = left; i < right; i++)
+                        for (int j = top; j < bottom; j++)
+                        { if (items[x, y] == null) return new DIconPosition(i, j); }
+                    if (left == 0 && top == 0 && right == wcount && bottom == hcount) return null;
+                }
+                /*
+                $$$$$$$
+                $#####$
+                $#***#$
+                $#*+*#$
+                $#***#$
+                $#####$
+                $$$$$$$
+                */
+            }
+            return new DIconPosition(x,y);
         }
     }
 }

@@ -6,6 +6,7 @@ using System.IO;
 using System.Windows.Controls;
 using System.Windows.Input;
 using TWeather2015.Theme;
+using System.Collections.Generic;
 
 namespace TWeather2015
 {
@@ -92,18 +93,12 @@ namespace TWeather2015
             dIconManager.reCreateGrid(Width, Height);
             dIconManager.reCalculateItems();
             {
-                foreach (var fl in Directory.GetDirectories(
-                                       Environment.GetFolderPath(
-                                           Environment.SpecialFolder.DesktopDirectory)))
-                {
-                    dIconManager.addNewIcon(fl);
-                }
-                foreach (var fl in Directory.GetFiles(
-                                       Environment.GetFolderPath(
-                                           Environment.SpecialFolder.DesktopDirectory)))
-                {
-                    dIconManager.addNewIcon(fl);
-                }
+                List<string> files = new List<string>();
+                files.AddRange(Directory.GetDirectories(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)));
+                files.AddRange(Directory.GetDirectories(Environment.GetFolderPath(Environment.SpecialFolder.CommonDesktopDirectory)));
+                files.AddRange(Directory.GetFiles(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)));
+                files.AddRange(Directory.GetFiles(Environment.GetFolderPath(Environment.SpecialFolder.CommonDesktopDirectory)));
+                dIconManager.loadIcons(files.ToArray());
             }
             //dIconManager.UpdateLayout();
         }

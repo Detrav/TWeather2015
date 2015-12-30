@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using TWeather2015.Core;
 
 namespace TWeather2015.Theme
 {
@@ -58,12 +59,12 @@ namespace TWeather2015.Theme
         }
 
         public DIcon(DIconManager myParent,string filename, int x, int y) : this()
-        {
-            setPosition(x, y);
+        {            
             text = System.IO.Path.GetFileNameWithoutExtension(filename);
-            Console.WriteLine("{0} {1} {2}", text, x, y);
             this.filename = filename;
             this.myParent = myParent;
+            setPosition(x, y);
+            Console.WriteLine("{0} {1} {2}", text, x, y);
         }
 
         public void setPosition(int x, int y)
@@ -72,6 +73,7 @@ namespace TWeather2015.Theme
             this.y = y;
             SetValue(Grid.ColumnProperty, x);
             SetValue(Grid.RowProperty, y);
+            DIconPositionManager.setPosition(filename, x, y);
         }
 
         private void borderMain_Click(object sender, RoutedEventArgs e)

@@ -62,6 +62,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Core\DIconPositionManager.cs" />
+    <Compile Include="Core\SerializableDictionary.cs" />
     <Compile Include="Theme\DIcon.xaml.cs">
       <DependentUpon>DIcon.xaml</DependentUpon>
     </Compile>
@@ -113,9 +115,7 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Core\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Resource Include="Resources\empty.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
