@@ -24,7 +24,7 @@ namespace TWeather2015.Theme
 
         public int x { get; private set; }
         public int y { get; private set; }
-        public string text { get { return textBlock.Text; } set { textBlock.Text = value; borderMain.ToolTip = value; } }
+        public string text { get { return textBlock.Text; } set { textBlock.Text = value; } }
         public string filename { get; private set; }
 
         /*#region Properties
@@ -61,6 +61,7 @@ namespace TWeather2015.Theme
         public void setFileName(string filename)
         {
             text = System.IO.Path.GetFileNameWithoutExtension(filename);
+            this.borderMain.ToolTip = System.IO.Path.GetFileName(filename);
             this.filename = filename;
         }
 
