@@ -69,6 +69,12 @@ namespace TWeather2015
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+        [return: MarshalAs(UnmanagedType.Bool)]
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+
+        const uint WM_RBUTTONDOWN = 0x0204;
+        const uint WM_RBUTTONUP = 0x0205;
 
 
 
@@ -83,9 +89,9 @@ namespace TWeather2015
             if (handle == IntPtr.Zero) handle = new WindowInteropHelper(this).Handle;
 
             IntPtr hwndParent = FindWindow("ProgMan", null);
-            IntPtr next = FindWindowEx(hwndParent, IntPtr.Zero, "SHELLDLL_DefView", null);
-            SetParent(handle, next);
-            desktopHandle = FindWindowEx(next, IntPtr.Zero, "SysListView32", "FolderView");
+            hwndParent2 = FindWindowEx(hwndParent, IntPtr.Zero, "SHELLDLL_DefView", null);
+            SetParent(handle, hwndParent2);
+            desktopHandle = FindWindowEx(hwndParent2, IntPtr.Zero, "SysListView32", "FolderView");
             if (desktopHandle != IntPtr.Zero)
             {
                 ShowWindow(desktopHandle, 0);
@@ -251,8 +257,16 @@ namespace TWeather2015
             }
             if(e.ChangedButton == MouseButton.Right)
             {
+                var pt = e.GetPosition(gridMain);
+                //Console.WriteLine("{0:X} - {1:X} - {2:X}", (ushort)pt.X, (ushort)pt.Y << 16 , );
+                IntPtr pt2 = new IntPtr(((ushort)pt.X) + ((ushort)pt.Y << 16));
+                PostMessage(hwndParent2, WM_RBUTTONDOWN, IntPtr.Zero, pt2);
+                PostMessage(hwndParent2, WM_RBUTTONUP, IntPtr.Zero, pt2);
+                return;
+                Close();
+                
                 ShellContextMenu scm = new ShellContextMenu();
-                DirectoryInfo[] di = new DirectoryInfo[] {new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)) };
+                FileInfo[] di = new FileInfo[] {new FileInfo(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)) };
                 var p = new System.Drawing.Point() { X = (int)e.GetPosition(gridMain).X, Y = (int)e.GetPosition(gridMain).Y };
                 scm.ShowContextMenu(di,p);
             }
@@ -329,6 +343,8 @@ namespace TWeather2015
         [DllImport("user32.dll")]
         static extern uint GetDoubleClickTime();
         static uint doubleClickTime = GetDoubleClickTime();
+        private IntPtr hwndParent2;
+
         internal void DIcon_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
             switch (mouseState)
